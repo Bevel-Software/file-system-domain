@@ -6,6 +6,8 @@ plugins {
     kotlin("jvm") version "2.0.10"
     `maven-publish`
     id("com.github.jk1.dependency-license-report") version "2.9"
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
+    signing
 }
 
 licenseReport {
@@ -35,20 +37,26 @@ val projectVersion = "1.0.0"
 group = projectGroup
 version = projectVersion
 
+// Create Javadoc and source jars
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            
+
             groupId = projectGroup
             artifactId = "file-system-domain"
             version = projectVersion
-            
+
             pom {
                 name.set("File System Domain")
                 description.set("File system domain library for Bevel")
                 url.set("https://bevel.software")
-                
+
                 licenses {
                     license {
                         name.set("Mozilla Public License 2.0")
@@ -73,18 +81,19 @@ publishing {
             }
         }
     }
-    
-    // Configure repository for Maven publishing
+}
+
+// Configure signing
+signing {
+    sign(publishing.publications["maven"])
+}
+
+nexusPublishing {
     repositories {
-        maven {
-            name = "ProjectRepository"
-            url = uri(layout.buildDirectory.dir("repo"))
-            // For actual remote repositories, uncomment and configure these:
-            // url = uri("https://your.maven.repo/releases")
-            // credentials {
-            //     username = findProperty("mavenUsername") as String?
-            //     password = findProperty("mavenPassword") as String?
-            // }
+        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
+        sonatype {
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
         }
     }
 }
