@@ -205,40 +205,6 @@ fun main() {
     *   `WebClient`: Contract for making HTTP requests.
     *   (These are primarily interfaces; implementations might reside in other Bevel modules or be provided by the user).
 
-## Project Structure
-
-```
-file-system-domain/
-├── .idea/                     # IntelliJ project files (usually in .gitignore)
-├── gradle/                    # Gradle wrapper files
-├── src/
-│   └── main/
-│       └── kotlin/
-│           └── software/bevel/file_system_domain/
-│               ├── BevelFilesPathResolver.kt
-│               ├── FileWalker.kt
-│               ├── LCPosition.kt
-│               ├── LCRange.kt
-│               ├── PathHandling.kt
-│               ├── services/
-│               │   ├── CachedFileHandler.kt
-│               │   ├── CachedIoFileHandler.kt
-│               │   ├── FileHandler.kt
-│               │   └── IoFileHandler.kt
-│               └── web/
-│                   ├── CommunicationInterfaceCreator.kt
-│                   ├── LocalCommunicationInterface.kt
-│                   ├── SimpleResponse.kt
-│                   ├── WebClient.kt
-│                   └── WebResponse.kt
-├── .gitignore
-├── build.gradle.kts           # Gradle build script (Kotlin DSL)
-├── gradlew                    # Gradle wrapper executable (Linux/macOS)
-├── gradlew.bat                # Gradle wrapper executable (Windows)
-├── LICENSE                    # Project license (Mozilla Public License 2.0)
-├── NOTICE                     # Dependency license report
-└── settings.gradle.kts        # Gradle settings script
-```
 
 ## Building from Source
 
