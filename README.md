@@ -13,8 +13,6 @@ This library aims to simplify common file system tasks for developers working wi
 
 *   **`BevelFilesPathResolver`**: A utility for easily locating standard Bevel directories (e.g., `.bevel`, `.bevel/private`, `.bevel/shareable`) and configuration files (e.g., `config.json`, `.env`) within a project. It handles the creation of these paths if they don't exist.
 *   **`FileHandler` Interface**: An abstraction for file I/O operations (read, write, delete, check existence). This promotes testability and allows for different implementations (e.g., direct I/O, cached I/O).
-    *   **`IoFileHandler`**: A standard implementation using Java's `java.io.File`.
-    *   **`CachedIoFileHandler`**: An implementation that extends `IoFileHandler` with an in-memory cache for file content and metadata, improving performance for repeated access.
 *   **`LCPosition` & `LCRange`**: Data classes for representing line/column positions and ranges within text files, useful for source code analysis tools.
 *   **Path Utilities**: Helper functions like `relativizePath` and `absolutizePath` for managing file paths relative to a project root.
 *   **Web Communication Interfaces**: Basic interfaces (`LocalCommunicationInterface`, `WebClient`) for defining contracts for local and remote communication, potentially used by other Bevel components.
@@ -23,7 +21,6 @@ This library aims to simplify common file system tasks for developers working wi
 
 *   ✅ **Standardized Bevel Path Resolution**: Consistently locate Bevel-specific files and directories (e.g., `.bevel/shareable/config.json`).
 *   🛡️ **Abstracted File I/O**: Use the `FileHandler` interface for flexible and testable file operations.
-*   ⚡ **Cached File Access**: `CachedIoFileHandler` provides an in-memory cache to speed up repeated file reads.
 *   📄 **Text Position Utilities**: `LCPosition` and `LCRange` for precise referencing within files.
 *   🌐 **Maven Central Availability**: Easily integrate into any JVM project (Kotlin, Java, Scala, etc.) using Gradle or Maven.
 *   🧩 **Modular Design**: Core file system utilities that can be leveraged by various Bevel tools or other projects.
@@ -32,7 +29,6 @@ This library aims to simplify common file system tasks for developers working wi
 
 *   **Consistency for Bevel Projects**: Ensures that all tools interacting with a Bevel project structure locate files and directories in the same way.
 *   **Testability**: The `FileHandler` abstraction allows mocking file system interactions in unit tests.
-*   **Performance**: The `CachedIoFileHandler` can significantly reduce I/O overhead for frequently accessed files.
 *   **Simplified Development**: Reduces boilerplate code for common file and path manipulation tasks.
 
 ## Installation / Getting Started
@@ -103,42 +99,7 @@ fun main() {
 }
 ```
 
-### 2. Using `FileHandler`
-
-You can use `IoFileHandler` for direct file operations or `CachedIoFileHandler` for cached access.
-
-```kotlin
-import software.bevel.file_system_domain.services.IoFileHandler
-import software.bevel.file_system_domain.services.CachedIoFileHandler
-
-fun main() {
-    val filePath = "example.txt"
-
-    // Using IoFileHandler
-    val ioHandler = IoFileHandler()
-    ioHandler.writeString(filePath, "Hello from IoFileHandler!")
-    if (ioHandler.exists(filePath)) {
-        val content = ioHandler.readString(filePath)
-        println("Read via IoFileHandler: $content")
-        ioHandler.delete(filePath)
-    }
-
-    // Using CachedIoFileHandler
-    val cachedHandler = CachedIoFileHandler()
-    cachedHandler.writeString(filePath, "Hello from CachedIoFileHandler!")
-    // First read will populate the cache
-    var content = cachedHandler.readString(filePath)
-    println("Read (1st time) via CachedIoFileHandler: $content")
-    // Second read should hit the cache
-    content = cachedHandler.readString(filePath)
-    println("Read (2nd time) via CachedIoFileHandler: $content")
-
-    cachedHandler.clearCache() // Manually clear the cache if needed
-    cachedHandler.delete(filePath)
-}
-```
-
-### 3. Using `LCPosition` and `LCRange`
+### 2. Using `LCPosition` and `LCRange`
 
 These are useful for representing locations in text files.
 
@@ -161,7 +122,7 @@ fun main() {
 }
 ```
 
-### 4. Path Utilities
+### 3. Path Utilities
 
 `relativizePath` and `absolutizePath` (Note: these operate on string paths and are simple utilities).
 
@@ -188,12 +149,8 @@ fun main() {
     *   Provides static methods like `baseFolderPath()`, `privateFolderPath()`, `publicFolderPath()`, `bevelEnvFilePath()`, `bevelConfigFilePath()`, etc., to get `java.nio.file.Path` objects to standard Bevel locations.
 *   **`software.bevel.file_system_domain.services.FileHandler`**:
     *   Interface defining methods like `readString()`, `readLines()`, `writeString()`, `exists()`, `isFile()`, `delete()`, `createFile()`, `createDirectory()`, `getExtensionFromPath()`.
-*   **`software.bevel.file_system_domain.services.IoFileHandler`**:
-    *   Standard `FileHandler` implementation using direct `java.io.File` operations.
 *   **`software.bevel.file_system_domain.services.CachedFileHandler`**:
     *   Interface extending `FileHandler` with `clearCache()`.
-*   **`software.bevel.file_system_domain.services.CachedIoFileHandler`**:
-    *   `FileHandler` implementation providing FIFO caching for file content and lines.
 *   **`software.bevel.file_system_domain.LCPosition`**:
     *   Data class representing a `(line, column)` pair.
 *   **`software.bevel.file_system_domain.LCRange`**:
